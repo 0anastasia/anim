@@ -1,3 +1,8 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/skoh33pkac3lx23n?svg=true)](https://ci.appveyor.com/project/0anastasia/anim)
+
+
+https://0anastasia.github.io/anim/
+
 ## "9. Анимации и CSS"
 
 
