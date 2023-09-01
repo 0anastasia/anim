@@ -1,55 +1,54 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-// Хеширование файлов только в production mode
-function addHash(fileName, buildMode, hash = 'contenthash') {
-  return buildMode === 'production' ? fileName.replace(/\.[^.]+$/, `.[${hash}]$&`) : fileName;
-}
-
-module.exports = (buildMode) => ({
-  entry: './src/index.js',
+module.exports = {
+  target: 'web',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: addHash('[name].js', buildMode),
+    publicPath: '',
   },
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        use: ['babel-loader'],
+        use: {
+          loader: 'babel-loader',
+        },
       },
       {
         test: /\.html$/,
-        use: ['html-loader'],
+        use: [
+          {
+            loader: 'html-loader',
+          },
+        ],
+      },
+      {
+        // это должно быт здесь, тк есть встроенный лоадер, способный обрабатывать такие файлы
+        test: /\.(?:ico|png|jpg|jpeg|gif)$/i,
+
+        type: 'asset/resource',
       },
       {
         test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader, 'css-loader',
-        ],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
-        test: /\.png$/,
-        use: [
-          {
-            loader: 'url-loader',
-          },
-        ],
+        test: /\.svg$/,
+        type: 'asset/resource',
       },
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(),
     new HtmlWebPackPlugin({
       template: './src/index.html',
       filename: './index.html',
     }),
     new MiniCssExtractPlugin({
-      filename: addHash('[name].css', buildMode),
-      chunkFilename: addHash('[id].css', buildMode),
+      filename: '[name].css',
+      chunkFilename: '[id].css',
     }),
   ],
-});
+};
